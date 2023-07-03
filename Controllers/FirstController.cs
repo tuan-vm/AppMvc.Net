@@ -118,6 +118,7 @@ namespace AppMVC01.Controllers
         [TempData]
         public string StatusMessage { get; set; }   
 
+
         public IActionResult ViewProduct(int? id)
         {
             var product = _productServices.Where(p => p.Id == id).FirstOrDefault();

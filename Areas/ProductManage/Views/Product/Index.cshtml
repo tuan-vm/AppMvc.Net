@@ -1,0 +1,17 @@
+﻿@using AppMVC01.Models
+@model List<ProductModel>
+@*@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}*@
+    <h1>Danh sach cac san pham</h1>
+
+    <ul>
+    @foreach (var product in Model)
+    {
+        <li>
+            @product.Name
+        </li>
+    }
+</ul>
+
+<a asp-action=""></a>

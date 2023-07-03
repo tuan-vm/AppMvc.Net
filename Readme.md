@@ -14,3 +14,11 @@ _Action trar ve bat ki kieu du lieu nao , thuong la IActionResult
 _ViewData
 -ViewBag
 -TempData
+
+## Areas
+- La ten nguoi dung routing
+- La cau truc thu muc chua MVC
+- Thiet lap Area cho controller bang  [Area("AreaName")]
+- Tao cau truc thu muc
+
+dotnet aspnet-codegenerator area Product
