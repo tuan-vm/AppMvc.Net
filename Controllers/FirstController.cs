@@ -116,8 +116,9 @@ namespace AppMVC01.Controllers
         }
 
         [TempData]
-        public string StatusMessage { get; set; }   
+        public string StatusMessage { get; set; }
 
+       //AcceptVerbs("POST")]    
 
         public IActionResult ViewProduct(int? id)
         {

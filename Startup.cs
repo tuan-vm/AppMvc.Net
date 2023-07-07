@@ -1,4 +1,5 @@
 using AppMVC01.ExtendMethods;
+using AppMVC01.Models;
 using AppMVC01.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +35,13 @@ namespace AppMVC01
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDBContext>(options =>
+            {
+                string connectString = Configuration.GetConnectionString("AppMvcConnectString");
+                options.UseSqlServer(connectString);
+            }
+               );
+
             services.AddControllersWithViews(); // dang ky vao ung dung dung cac dich vu de hoat dong theo mo hinh MVC
             services.AddRazorPages(); // dang ky vao he thong cac dich vu lien quan den trang Razor
             //services.AddTransient(typeof(ILogger<>), typeof(Logger<>)); // Logger mac dinh da duoc tu dong dky nhu nay
