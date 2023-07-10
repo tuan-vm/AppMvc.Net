@@ -28,6 +28,6 @@ namespace AppMVC01.Models
 
             //}
         }
-      
+        public DbSet<Contact> Contacts { get; set; }
     }
 }
