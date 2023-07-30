@@ -1,4 +1,7 @@
-﻿using AppMVC01.ExtendMethods;
+﻿using App.Data;
+using App.Models;
+using App.Services;
+using AppMVC01.ExtendMethods;
 using AppMVC01.Models;
 using AppMVC01.Services;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +45,11 @@ namespace AppMVC01
                 options.UseSqlServer(connectString);
             }
                );
+
+            services.AddOptions();
+            var mailsetting = Configuration.GetSection("MailSettings");
+            services.Configure<MailSettings>(mailsetting);
+            services.AddSingleton<IEmailSender, SendMailService>();
 
             services.AddControllersWithViews(); // dang ky vao ung dung dung cac dich vu de hoat dong theo mo hinh MVC
             services.AddRazorPages(); // dang ky vao he thong cac dich vu lien quan den trang Razor
@@ -125,8 +133,18 @@ namespace AppMVC01
                     facebookOptions.CallbackPath = "/dang-nhap-tu-facebook";
                 });
 
+            services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 
             services.AddSingleton(typeof(PlanetService), typeof(PlanetService));
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ViewManageMenu", builder =>
+                {
+                    builder.RequireAuthenticatedUser();
+                    builder.RequireRole(RoleName.Administrator);
+                });
+            });
 
         }
 

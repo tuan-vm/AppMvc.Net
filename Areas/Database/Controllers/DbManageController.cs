@@ -1,6 +1,11 @@
-﻿using AppMVC01.Models;
+﻿using App.Data;
+using App.Models;
+using AppMVC01.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppMVC01.Areas.Database.Controllers
@@ -10,10 +15,14 @@ namespace AppMVC01.Areas.Database.Controllers
     public class DbManageController : Controller
     {
         private readonly AppDBContext _dbContext;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public DbManageController(AppDBContext dBContext)
+        public DbManageController(AppDBContext dBContext, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _dbContext = dBContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         [TempData]
@@ -21,6 +30,7 @@ namespace AppMVC01.Areas.Database.Controllers
 
         public IActionResult Index()
         {
+            Console.WriteLine("dddhhh");
             return View();
         }
 
@@ -44,6 +54,41 @@ namespace AppMVC01.Areas.Database.Controllers
             await _dbContext.Database.MigrateAsync();
             StatusMessage = "Cap nhap Database thanh cong";
             return RedirectToAction(nameof(Index));
+        }
+
+        
+        public async Task<IActionResult> SeedDataAsync()
+        {
+            Console.WriteLine("hhhhhh");
+            // Create Roles
+            var rolenames = typeof(RoleName).GetFields().ToList();
+            
+            foreach(var r in rolenames)
+            {
+                var rolename = (string) r.GetRawConstantValue();
+                var rfound = await _roleManager.FindByNameAsync(rolename);
+                if (rfound == null) 
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(rolename)); // cap nhap Role trong database
+                }
+            }
+
+            //admin, pass = admin123, admin@example
+            var useradmin = await _userManager.FindByEmailAsync("admin@example.com");
+            if (useradmin == null) 
+            {
+                useradmin = new AppUser() 
+                {
+                    UserName= "admin",
+                    Email = "admin@example.com",
+                    EmailConfirmed= true,
+                };
+                await _userManager.CreateAsync(useradmin, "admin123"); // add user co Role Admin
+                await _userManager.AddToRoleAsync(useradmin, RoleName.Administrator);
+                
+            }
+            StatusMessage = "Vua seed Database";
+            return RedirectToAction("Index"); // chuyen huong ve controller Index
         }
     }
 
